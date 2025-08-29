@@ -38,7 +38,6 @@
     .gallery img:hover {
       transform: scale(1.05);
     }
-    /* Lightbox */
     .lightbox {
       position: fixed;
       top: 0; left: 0;
@@ -60,7 +59,6 @@
       from { transform: scale(0.7); opacity: 0; }
       to { transform: scale(1); opacity: 1; }
     }
-    /* Background Canvas */
     #bg-canvas {
       position: fixed;
       top: 0; left: 0;
@@ -71,13 +69,11 @@
   </style>
 </head>
 <body>
-  <!-- Background Canvas -->
   <canvas id="bg-canvas"></canvas>
 
-  <h1>✨ My Animated Gallery ✨</h1>
+  <h1>✨ Clicks ✨</h1>
   <div class="gallery" id="gallery"></div>
 
-  <!-- Lightbox -->
   <div class="lightbox" id="lightbox">
     <img id="lightbox-img" src="" alt="Enlarged">
   </div>
