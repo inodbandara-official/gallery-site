@@ -3,79 +3,285 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Animated Gallery</title>
+  <title>Hera's Gallery</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    body {
-      font-family: Arial, sans-serif;
+    * {
       margin: 0;
-      background: #111;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
       color: #fff;
-      text-align: center;
+      min-height: 100vh;
       overflow-x: hidden;
     }
-    h1 { margin: 20px; z-index: 1; position: relative; }
+
+    .header {
+      padding: 3rem 1rem 2rem;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .header h1 {
+      font-size: 3.5rem;
+      font-weight: 300;
+      letter-spacing: 3px;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      background: linear-gradient(to right, #f8f8f8 0%, #c7c7c7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .header p {
+      font-size: 1.2rem;
+      font-weight: 300;
+      max-width: 600px;
+      margin: 0 auto;
+      color: #d0d0d0;
+      line-height: 1.6;
+    }
+
+    .gallery-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
     .gallery {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 15px;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 25px;
       padding: 20px;
       z-index: 1;
       position: relative;
     }
-    .gallery img {
-      width: 100%;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+
+    .gallery-item {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
       cursor: pointer;
+      transform: translateY(30px);
       opacity: 0;
-      transform: scale(0.95);
-      transition: transform 0.4s ease, opacity 0.4s ease;
+      transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1), 
+                  opacity 0.6s cubic-bezier(0.165, 0.84, 0.44, 1),
+                  box-shadow 0.3s ease;
     }
-    .gallery img.show {
+
+    .gallery-item.show {
       opacity: 1;
-      transform: scale(1);
+      transform: translateY(0);
     }
-    .gallery img:hover {
-      transform: scale(1.05);
+
+    .gallery-item:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
     }
+
+    .gallery-item img {
+      width: 100%;
+      height: 240px;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+
+    .gallery-item:hover img {
+      transform: scale(1.08);
+    }
+
+    .gallery-item::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 40%;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .gallery-item:hover::after {
+      opacity: 1;
+    }
+
+    .image-info {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 20px;
+      z-index: 3;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+    }
+
+    .gallery-item:hover .image-info {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .image-info h3 {
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-bottom: 5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .image-info p {
+      font-size: 0.9rem;
+      color: #b0b0b0;
+    }
+
     .lightbox {
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.8);
-      display: none;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.92);
+      display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 10;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
     }
-    .lightbox img {
+
+    .lightbox.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .lightbox-content {
       max-width: 90%;
       max-height: 90%;
-      border-radius: 12px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.9);
+      position: relative;
       animation: zoomIn 0.3s ease;
     }
+
+    .lightbox-content img {
+      max-width: 100%;
+      max-height: 80vh;
+      border-radius: 8px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: -40px;
+      right: 0;
+      color: white;
+      font-size: 2rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: opacity 0.2s ease;
+    }
+
+    .lightbox-close:hover {
+      opacity: 1;
+    }
+
+    .lightbox-caption {
+      position: absolute;
+      bottom: -40px;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      color: #f0f0f0;
+      font-size: 1.1rem;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      color: #a0a0a0;
+      font-style: italic;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 3rem 1rem 2rem;
+      color: #888;
+      font-size: 0.9rem;
+    }
+
     @keyframes zoomIn {
-      from { transform: scale(0.7); opacity: 0; }
+      from { transform: scale(0.9); opacity: 0; }
       to { transform: scale(1); opacity: 1; }
     }
+
     #bg-canvas {
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       z-index: -1;
-      background: #111;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 2.5rem;
+      }
+      
+      .gallery {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 15px;
+      }
+      
+      .gallery-item img {
+        height: 200px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header h1 {
+        font-size: 2rem;
+      }
+      
+      .gallery {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
     }
   </style>
 </head>
 <body>
   <canvas id="bg-canvas"></canvas>
 
-  <h1>✨ Clicks ✨</h1>
-  <div class="gallery" id="gallery"></div>
+  <header class="header">
+    <h1>Luminous Moments</h1>
+    <p>Capturing the beauty in everyday life through the lens</p>
+  </header>
+
+  <div class="gallery-container">
+    <div class="gallery" id="gallery"></div>
+    <div class="loading" id="loading">Loading captivating moments...</div>
+  </div>
 
   <div class="lightbox" id="lightbox">
-    <img id="lightbox-img" src="" alt="Enlarged">
+    <div class="lightbox-content">
+      <button class="lightbox-close"><i class="fas fa-times"></i></button>
+      <img id="lightbox-img" src="" alt="Enlarged view">
+      <div class="lightbox-caption" id="lightbox-caption"></div>
+    </div>
   </div>
 
   <script>
@@ -85,32 +291,82 @@
     const folder = "images";
 
     async function loadImages() {
-      const url = `https://api.github.com/repos/${username}/${repo}/contents/${folder}?ref=${branch}`;
-      const res = await fetch(url);
-      const files = await res.json();
-
       const gallery = document.getElementById("gallery");
-
-      files.forEach((file, i) => {
-        if (file.name.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+      const loading = document.getElementById("loading");
+      
+      try {
+        const url = `https://api.github.com/repos/${username}/${repo}/contents/${folder}?ref=${branch}`;
+        const res = await fetch(url);
+        
+        if (!res.ok) {
+          throw new Error(`Failed to fetch images: ${res.status}`);
+        }
+        
+        const files = await res.json();
+        const imageFiles = files.filter(file => file.name.match(/\.(jpg|jpeg|png|gif|webp)$/i));
+        
+        if (imageFiles.length === 0) {
+          loading.textContent = "No images found in the gallery.";
+          return;
+        }
+        
+        loading.style.display = "none";
+        
+        imageFiles.forEach((file, i) => {
+          const item = document.createElement("div");
+          item.className = "gallery-item";
+          
           const img = document.createElement("img");
           img.src = `https://raw.githubusercontent.com/${username}/${repo}/${branch}/${folder}/${file.name}`;
           img.alt = file.name;
-
-          setTimeout(() => img.classList.add("show"), i * 150);
-
-          img.addEventListener("click", () => {
+          
+          const info = document.createElement("div");
+          info.className = "image-info";
+          
+          const title = document.createElement("h3");
+          const titleText = file.name
+            .split('.')[0]
+            .replace(/[-_]/g, ' ')
+            .replace(/\b\w/g, l => l.toUpperCase());
+          title.textContent = titleText;
+          
+          const date = document.createElement("p");
+          const randomDate = new Date(Date.now() - Math.floor(Math.random() * 10000000000));
+          date.textContent = randomDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+          
+          info.appendChild(title);
+          info.appendChild(date);
+          
+          item.appendChild(img);
+          item.appendChild(info);
+          
+          setTimeout(() => item.classList.add("show"), i * 150);
+          
+          item.addEventListener("click", () => {
             document.getElementById("lightbox-img").src = img.src;
-            document.getElementById("lightbox").style.display = "flex";
+            document.getElementById("lightbox-caption").textContent = titleText;
+            document.getElementById("lightbox").classList.add("active");
           });
-
-          gallery.appendChild(img);
-        }
-      });
+          
+          gallery.appendChild(item);
+        });
+      } catch (error) {
+        console.error("Error loading images:", error);
+        loading.textContent = "Failed to load images. Please check your connection and try again.";
+      }
     }
 
-    document.getElementById("lightbox").addEventListener("click", () => {
-      document.getElementById("lightbox").style.display = "none";
+    document.getElementById("lightbox").addEventListener("click", (e) => {
+      if (e.target.id === "lightbox" || e.target.classList.contains("lightbox-close") || 
+          e.target.classList.contains("fa-times")) {
+        document.getElementById("lightbox").classList.remove("active");
+      }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        document.getElementById("lightbox").classList.remove("active");
+      }
     });
 
     loadImages();
@@ -121,22 +377,36 @@
     canvas.height = window.innerHeight;
 
     const particles = [];
-    for (let i = 0; i < 80; i++) {
+    const particleCount = 100;
+    
+    for (let i = 0; i < particleCount; i++) {
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        r: Math.random() * 2 + 1,
-        dx: (Math.random() - 0.5) * 1.5,
-        dy: (Math.random() - 0.5) * 1.5
+        r: Math.random() * 2 + 0.5,
+        dx: (Math.random() - 0.5) * 0.8,
+        dy: (Math.random() - 0.5) * 0.8,
+        alpha: Math.random() * 0.5 + 0.3
       });
     }
 
     function animateParticles() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      const gradient = ctx.createRadialGradient(
+        canvas.width / 2, canvas.height / 2, 0,
+        canvas.width / 2, canvas.height / 2, canvas.width * 0.8
+      );
+      gradient.addColorStop(0, 'rgba(25, 22, 55, 0.2)');
+      gradient.addColorStop(1, 'rgba(15, 12, 41, 0.6)');
+      
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
       particles.forEach(p => {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(255,255,255,0.7)";
+        ctx.fillStyle = `rgba(255, 255, 255, ${p.alpha})`;
         ctx.fill();
 
         p.x += p.dx;
@@ -145,8 +415,10 @@
         if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
         if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
       });
+      
       requestAnimationFrame(animateParticles);
     }
+    
     animateParticles();
 
     window.addEventListener("resize", () => {
@@ -155,4 +427,10 @@
     });
   </script>
 </body>
+<footer class="footer">
+    <p>&copy; 2025 Luminous Moments Gallery | Curated with passion</p>
+    <div class="attribution">
+        Photography by <a href="https://inodbandara-official.github.io" target="_blank">Inod Bandara</a>
+      </div>
+</footer>
 </html>
